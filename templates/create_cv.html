@@ -19,9 +19,6 @@
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
-    .form-section {
-      margin-bottom: 40px;
-    }
     input[type="text"], input[type="number"], textarea, input[type="file"] {
       width: 100%;
       padding: 10px;
@@ -29,9 +26,6 @@
       margin-bottom: 20px;
       border: 1px solid #ccc;
       border-radius: 5px;
-    }
-    .failure-group {
-      margin-bottom: 30px;
     }
     label {
       font-weight: bold;
@@ -45,8 +39,11 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    .failure-group {
+      margin-bottom: 30px;
+    }
 
-    /* ✅ Canva-style Resume Design */
+    /* Resume Preview Styling */
     .resume-preview {
       background: white;
       border: 6px solid #000;
@@ -85,9 +82,15 @@
       display: block;
       box-shadow: 0 0 0 4px #e91e63;
     }
-    .subsection {
-      margin-top: 30px;
+    .failures-container {
+      display: flex;
+      gap: 40px;
+      justify-content: space-between;
+      margin-top: 40px;
       text-align: left;
+    }
+    .column {
+      width: 48%;
     }
     .subsection h3 {
       color: #e91e63;
@@ -95,6 +98,7 @@
       padding-bottom: 6px;
       font-size: 1.1em;
       text-transform: uppercase;
+      margin-top: 30px;
     }
     .subsection ul {
       padding-left: 20px;
@@ -166,7 +170,7 @@
       </div>
     </div>
 
-    <button type="submit">Generate Resume</button>
+  <button type="submit">Generate Resume</button>
   </form>
 
   <div class="resume-preview" id="preview" style="display:none;"></div>
@@ -183,30 +187,44 @@
 
     const preview = document.getElementById('preview');
     preview.innerHTML = `
+      <img class="profile-pic" style="display:none;" id="photo-preview" />
       <h2>${name}</h2>
       <p class="occupation">${occupation}</p>
-      <p class="profile-text">${profile}</p>`;
+      <p class="profile-text">${profile}</p>
+      <div class="failures-container">
+        <div class="column" id="left-column"></div>
+        <div class="column" id="right-column"></div>
+      </div>
+    `;
 
     if (photo) {
       const reader = new FileReader();
       reader.onload = function (e) {
-        preview.innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="profile-pic">` + preview.innerHTML;
+        const img = document.getElementById('photo-preview');
+        img.src = e.target.result;
+        img.style.display = 'block';
       }
       reader.readAsDataURL(photo);
     }
 
-    const categories = ['Failures in Academics', 'Jobs I Never Got', 'Screw-Ups in Business', 'Things I Never Accomplished', 'Skills I Never Established', 'Things That Still Scare Me'];
-    categories.forEach(cat => {
+    const leftCategories = ['Failures in Academics', 'Jobs I Never Got', 'Skills I Never Established'];
+    const rightCategories = ['Screw-Ups in Business', 'Things I Never Accomplished', 'Things That Still Scare Me'];
+
+    const renderTo = (columnId, cat) => {
       const inputs = document.getElementsByName(`${cat}[]`);
-      let values = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
-      if (values.length > 0) {
-        let html = `<div class="subsection">
-                      <h3>${cat.replace(/([A-Z])/g, ' $1').trim()}:</h3>
-                      <ul>${values.map(v => `<li>${v}</li>`).join('')}</ul>
-                    </div>`;
-        preview.innerHTML += html;
+      const values = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+      if (values.length) {
+        const html = `
+          <div class="subsection">
+            <h3>${cat.replace(/([A-Z])/g, ' $1').trim()}:</h3>
+            <ul>${values.map(v => `<li>${v}</li>`).join('')}</ul>
+          </div>`;
+        document.getElementById(columnId).innerHTML += html;
       }
-    });
+    };
+
+    leftCategories.forEach(cat => renderTo('left-column', cat));
+    rightCategories.forEach(cat => renderTo('right-column', cat));
 
     preview.style.display = 'block';
     window.scrollTo(0, preview.offsetTop);
@@ -214,4 +232,3 @@
 </script>
 </body>
 </html>
-
