@@ -2,215 +2,183 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Your Failure Resume</title>
-    <meta name="viewport" content="width=800, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}">
+    <title>Failure Resume Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            background: #eee;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
         }
-        .a4-paper {
-            width: 794px;
-            min-height: 1123px;
+        .container {
             background: white;
-            box-shadow: 0 0 8px rgba(0,0,0,0.25);
-            margin: 30px auto 30px auto;
-            padding: 48px 36px;
-            border-radius: 4px;
-            position: relative;
-            overflow: hidden;
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
-        .a4-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .form-section {
+            margin-bottom: 40px;
         }
-        .centered-modal {
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; width: 100vw;
-            position: fixed; left: 0; top: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
+        h2 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
         }
-        .centered-modal input,
-        .centered-modal textarea,
-        .centered-modal select {
-            font-family: inherit !important;
-            background: #fff !important;
-            color: #222 !important;
-            border: 1px solid #222 !important;
-            border-radius: 4px !important;
-            box-shadow: none !important;
-            width: 100% !important;
-            padding: 7px 10px !important;
-            margin-bottom: 0 !important;
-            appearance: none !important;
-            font-size: 1.1em;
+        input[type="text"], input[type="number"], textarea, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-        .centered-modal label {
-            color: #222 !important;
+        .failure-group {
+            margin-bottom: 30px;
+        }
+        label {
             font-weight: bold;
-            display: block;
-            margin-bottom: 6px;
         }
-        .centered-modal h2 {
-            margin-bottom: 18px;
-            text-align: center;
-            color: #222 !important;
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #3489eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .centered-modal button {
-            font-family: inherit !important;
-            letter-spacing: 0 !important;
-            border-radius: 4px !important;
-            border: none !important;
-            box-shadow: none !important;
-            margin: 0 4px 0 0 !important;
-            font-size: 1.05em;
-            padding: 10px 0 !important;
-            min-width: 100px;
+        .resume-preview {
+            margin-top: 60px;
+            padding: 30px;
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
         }
-        .centered-modal form {
-            box-shadow: none !important;
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ccc;
         }
-        .centered-modal input::-webkit-input-placeholder { color: #888; }
-        .centered-modal input:-ms-input-placeholder { color: #888; }
-        .centered-modal input::placeholder { color: #888; }
-
-        /* Fix date icon, but allow system icon for date fields */
-        .centered-modal input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: none !important;
+        .subsection {
+            margin-top: 20px;
         }
-        @media (max-width: 820px) {
-            .a4-paper { width: 98vw; height: auto; }
+        .subsection h3 {
+            margin-bottom: 10px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <!-- User Info Modal -->
-    <div id="userInfoModal" class="centered-modal">
-      <form id="user-info-form" style="background:white; padding:32px; border-radius:8px; max-width:340px; min-width:250px;">
-        <h2>Create Your Resume</h2>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required autocomplete="off">
-        <br><br>
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required min="0" autocomplete="off">
-        <br><br>
-        <button type="submit" style="width:100%;background:#3489eb;color:#fff;">Start</button>
-      </form>
-    </div>
-    <!-- End User Info Modal -->
+<div class="container">
+    <h1>Create Your Failure Resume</h1>
+    <form id="resume-form">
+        <div class="form-section">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
 
-    <!-- Failure Modal -->
-    <div id="failureModal" class="centered-modal" style="display:none;">
-      <form id="failure-form" style="background:white; padding:32px; border-radius:8px; max-width:400px; min-width:250px;">
-        <h2>Add Failure</h2>
-        <label for="fail_title">Title:</label>
-        <input type="text" id="fail_title" name="title" required autocomplete="off">
-        <br><br>
-        <label for="fail_date">Date:</label>
-        <input type="date" id="fail_date" name="date" required>
-        <br><br>
-        <label for="fail_desc">Description:</label>
-        <textarea id="fail_desc" name="desc" required></textarea>
-        <br><br>
-        <label for="fail_lesson">Lesson Learned:</label>
-        <textarea id="fail_lesson" name="lesson" required></textarea>
-        <br><br>
-        <button type="submit" style="background:#3489eb;color:#fff;">Add</button>
-        <button type="button" onclick="closeFailureModal()" style="background:#ccc;color:#222;margin-left:12px;">Cancel</button>
-      </form>
-    </div>
-    <!-- End Failure Modal -->
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" name="occupation" required>
 
-    <!-- The A4 Resume Live Preview -->
-    <div class="a4-container" id="a4-container">
-        <div class="a4-paper" id="resume-page-1">
-            <!-- User info and failures will appear here -->
+            <label for="profile">Profile (max 70 words):</label>
+            <textarea id="profile" name="profile" maxlength="500" rows="4" required></textarea>
+
+            <label for="photo">Upload Profile Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*">
         </div>
-    </div>
 
-    <!-- Scripts -->
-   <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // User Info Modal Logic
-    document.getElementById('user-info-form').onsubmit = function(e) {
+        <div class="form-section" id="failures">
+            <h2>Failures</h2>
+            <div class="failure-group" data-category="Academics">
+                <label>Failures in Academics (4 max):</label>
+                <input type="text" name="Academics[]">
+                <input type="text" name="Academics[]">
+                <input type="text" name="Academics[]">
+                <input type="text" name="Academics[]">
+            </div>
+            <div class="failure-group" data-category="Jobs">
+                <label>Jobs I Never Got:</label>
+                <input type="text" name="Jobs[]">
+                <input type="text" name="Jobs[]">
+                <input type="text" name="Jobs[]">
+                <input type="text" name="Jobs[]">
+            </div>
+            <div class="failure-group" data-category="Business">
+                <label>Screw-Ups in Business:</label>
+                <input type="text" name="Business[]">
+                <input type="text" name="Business[]">
+                <input type="text" name="Business[]">
+                <input type="text" name="Business[]">
+            </div>
+            <div class="failure-group" data-category="Unaccomplished">
+                <label>Things I Never Accomplished:</label>
+                <input type="text" name="Unaccomplished[]">
+                <input type="text" name="Unaccomplished[]">
+                <input type="text" name="Unaccomplished[]">
+                <input type="text" name="Unaccomplished[]">
+            </div>
+            <div class="failure-group" data-category="Skills">
+                <label>Skills I Never Established:</label>
+                <input type="text" name="Skills[]">
+                <input type="text" name="Skills[]">
+                <input type="text" name="Skills[]">
+                <input type="text" name="Skills[]">
+            </div>
+            <div class="failure-group" data-category="Fears">
+                <label>Things That Still Scare Me:</label>
+                <input type="text" name="Fears[]">
+                <input type="text" name="Fears[]">
+                <input type="text" name="Fears[]">
+                <input type="text" name="Fears[]">
+            </div>
+        </div>
+
+        <button type="submit">Generate Resume</button>
+    </form>
+
+    <div class="resume-preview" id="preview" style="display:none;"></div>
+</div>
+
+<script>
+    document.getElementById('resume-form').onsubmit = function (e) {
         e.preventDefault();
-        // Get form values
-        let name = this.name.value.trim();
-        let age = this.age.value.trim();
 
-        // Make sure the A4 container exists
-        let a4container = document.getElementById('a4-container');
-        let paper = document.getElementById('resume-page-1');
-        if (!paper) {
-            // If not found, create one
-            paper = document.createElement('div');
-            paper.className = 'a4-paper';
-            paper.id = 'resume-page-1';
-            a4container.appendChild(paper);
+        const name = document.getElementById('name').value;
+        const occupation = document.getElementById('occupation').value;
+        const profile = document.getElementById('profile').value;
+        const photo = document.getElementById('photo').files[0];
+
+        const preview = document.getElementById('preview');
+        preview.innerHTML = `<h2>${name}</h2>
+            <p><i>${occupation}</i></p>
+            <p>${profile}</p>`;
+
+        if (photo) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="profile-pic">` + preview.innerHTML;
+            }
+            reader.readAsDataURL(photo);
         }
 
-        // Set the innerHTML
-        paper.innerHTML = `<h1 style="margin-bottom:8px;">${name}</h1>
-        <p><b>Age:</b> ${age}</p>
-        <hr>
-        <h2 style="margin-top:20px;">Failures</h2>
-        <div id="failures-list"></div>
-        <br>
-        <button type="button" onclick="showFailureForm()" style="padding:10px 28px; background:#3489eb; color:white; border:none; border-radius:4px; font-size:1.1em;">Add Failure</button>`;
+        const categories = ['Academics', 'Jobs', 'Business', 'Unaccomplished', 'Skills', 'Fears'];
+        categories.forEach(cat => {
+            const inputs = document.getElementsByName(`${cat}[]`);
+            let values = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+            if (values.length > 0) {
+                let html = `<div class="subsection">
+                        <h3>${cat.replace(/([A-Z])/g, ' $1').trim()}:</h3>
+                        <ul>${values.map(v => `<li>${v}</li>`).join('')}</ul>
+                    </div>`;
+                preview.innerHTML += html;
+            }
+        });
 
-        // Hide modal
-        document.getElementById('userInfoModal').style.display = 'none';
-
-        // Save user info globally (for use in failures)
-        window.userInfo = {name, age};
-    };
-
-    // Failure Modal Logic
-    window.showFailureForm = function() {
-        document.getElementById('failureModal').style.display = 'flex';
+        preview.style.display = 'block';
+        window.scrollTo(0, preview.offsetTop);
     }
-    window.closeFailureModal = function() {
-        document.getElementById('failureModal').style.display = 'none';
-    }
-
-    document.getElementById('failure-form').onsubmit = function(e) {
-        e.preventDefault();
-
-        // Get values
-        let title = this.title.value.trim();
-        let date = this.date.value;
-        let desc = this.desc.value.trim();
-        let lesson = this.lesson.value.trim();
-
-        // Add new failure to the A4 paper live
-        let failuresList = document.querySelector('.a4-paper:last-child #failures-list');
-        let count = failuresList.children.length;
-        if (count >= 5) {
-            // Make a new page if current has 5 failures
-            let a4container = document.getElementById('a4-container');
-            let newPage = document.createElement('div');
-            newPage.className = 'a4-paper';
-            newPage.innerHTML = `<h1 style="margin-bottom:8px;">${window.userInfo.name}</h1>
-            <p><b>Age:</b> ${window.userInfo.age}</p>
-            <hr>
-            <h2 style="margin-top:20px;">Failures</h2>
-            <div id="failures-list"></div>`;
-            a4container.appendChild(newPage);
-            failuresList = newPage.querySelector('#failures-list');
-        }
-        failuresList.innerHTML += `<div style="margin-bottom:22px;">
-            <b>${title}</b> (${date})<br>
-            <span style="color:#888;"><i>${desc}</i></span><br>
-            <strong>Lesson:</strong> <span style="color:#27a745">${lesson}</span>
-        </div>`;
-
-        // Hide modal and reset form
-        closeFailureModal();
-        this.reset();
-    };
-});
 </script>
 </body>
 </html>

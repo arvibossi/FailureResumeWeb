@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'  # Required only if you later re-add sessions
 
-# Temporary in-memory storage (restarts will lose data)
+# In-memory failure list for the /add + /failures route
 failures = []
 
 @app.route('/')
@@ -29,10 +30,10 @@ def add_failure():
 def list_failures():
     return render_template('list_failures.html', failures=failures)
 
-# *** NEW: Interactive A4 Resume Builder ***
+# ✅ Updated Create CV route using the new Canva-style builder
 @app.route('/create')
 def create_cv():
-    return render_template('create_cv.html')
+    return render_template('create_cv.html')  # This file should now contain the full builder code
 
 if __name__ == "__main__":
     app.run(debug=True)
