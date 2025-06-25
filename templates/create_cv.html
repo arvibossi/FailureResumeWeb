@@ -53,48 +53,85 @@
       font-family: 'Open Sans', sans-serif;
       color: #333;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      text-align: center;
+      position: relative;
+      text-align: left;
     }
-    .resume-preview h2 {
+    .resume-preview::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 170px;
+      background: #000;
+      z-index: 0;
+    }
+    .resume-title {
       font-family: 'Playfair Display', serif;
       font-size: 2.4em;
+      text-align: center;
+      margin-bottom: 40px;
+      margin-top: 30px;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+    .header-section {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .profile-pic {
+      width: 196px;
+      height: 196px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #fff;
+      box-shadow: 0 0 0 4px #e91e63;
+      margin-right: 40px;
+      margin-top: -30px;
+      position: relative;
+      z-index: 1;
+    }
+    .green-divider {
+      width: 100%;
+      height: 3px;
+      background-color: #8BC34A;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .name-title {
+      flex-grow: 1;
+    }
+    .name-title h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2em;
       margin-bottom: 0;
     }
-    .resume-preview .occupation {
+    .occupation {
       color: #e91e63;
       font-weight: bold;
       font-size: 1.1em;
-      margin: 5px 0 20px;
+      margin: 5px 0 0;
     }
-    .resume-preview .profile-text {
+    .profile-text {
       color: #111;
       font-size: 0.95em;
-      max-width: 600px;
       margin: 0 auto 30px;
-    }
-    .profile-pic {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: -70px auto 10px;
-      border: 5px solid #fff;
-      display: block;
-      box-shadow: 0 0 0 4px #e91e63;
+      padding: 0 20px;
     }
     .failures-container {
       display: flex;
       gap: 40px;
       justify-content: space-between;
       margin-top: 40px;
-      text-align: left;
+      position: relative;
     }
     .column {
-      width: 48%;
+      width: calc(50% - 22px);
     }
     .subsection h3 {
       color: #e91e63;
-      border-bottom: 2px solid #8BC34A;
       padding-bottom: 6px;
       font-size: 1.1em;
       text-transform: uppercase;
@@ -103,6 +140,14 @@
     .subsection ul {
       padding-left: 20px;
       font-size: 0.95em;
+    }
+    .vertical-line {
+      position: absolute;
+      left: 42.5%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 100%;
+      background-color: #8BC34A;
     }
   </style>
 </head>
@@ -187,14 +232,20 @@
 
     const preview = document.getElementById('preview');
     preview.innerHTML = `
-      <img class="profile-pic" style="display:none;" id="photo-preview" />
-      <h2>${name}</h2>
-      <p class="occupation">${occupation}</p>
+      <h1 class="resume-title">The Failure Resume</h1>
+      <div class="header-section">
+        <img class="profile-pic" style="display:none;" id="photo-preview" />
+        <div class="name-title">
+          <h2>${name}</h2>
+          <p class="occupation">${occupation}</p>
+        </div>
+      </div>
+      <div class="green-divider"></div>
       <p class="profile-text">${profile}</p>
       <div class="failures-container">
         <div class="column" id="left-column"></div>
         <div class="column" id="right-column"></div>
-      </div>
+        <div class="vertical-line"></div>
     `;
 
     if (photo) {
