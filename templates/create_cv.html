@@ -27,6 +27,13 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+    #profile {
+      font-family: 'Courier New', monospace;
+      background-image: linear-gradient(to right, #f9f9f9 1px, transparent 1px);
+      background-size: 6.875ch 1px;
+      white-space: pre;
+      overflow-wrap: normal;
+    }
     label {
       font-weight: bold;
     }
@@ -38,23 +45,46 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #2a7bc8;
     }
     .failure-group {
       margin-bottom: 30px;
+    }
+    .char-count {
+      font-size: 0.8em;
+      color: #666;
+      text-align: right;
+      margin-top: -15px;
+      margin-bottom: 10px;
+    }
+    .char-limit {
+      color: #e91e63;
+    }
+    .error-message {
+      color: #e91e63;
+      font-size: 0.9em;
+      margin-top: -15px;
+      margin-bottom: 15px;
     }
 
     /* Resume Preview Styling */
     .resume-preview {
       background: white;
       border: 6px solid #000;
-      width: 794px;
+      width: calc(210mm - 20mm);
+      height: calc(297mm - 20mm);
       margin: 60px auto 0;
       padding: 40px;
+      box-sizing: border-box;
       font-family: 'Open Sans', sans-serif;
       color: #333;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       position: relative;
       text-align: left;
+      overflow: hidden;
     }
     .resume-preview::before {
       content: "";
@@ -70,8 +100,7 @@
       font-family: 'Playfair Display', serif;
       font-size: 2.4em;
       text-align: center;
-      margin-bottom: 40px;
-      margin-top: 30px;
+      margin: 30px 0 40px;
       color: white;
       position: relative;
       z-index: 1;
@@ -81,205 +110,440 @@
       align-items: center;
       margin-bottom: 30px;
     }
-    .profile-pic {
+    .profile-pic-container {
       width: 196px;
       height: 196px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 5px solid #fff;
-      box-shadow: 0 0 0 4px #e91e63;
+      padding: 4px;
+      background: #e91e63;
       margin-right: 40px;
       margin-top: -30px;
       position: relative;
       z-index: 1;
     }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #fff;
+    }
     .green-divider {
       width: 100%;
       height: 3px;
       background-color: #8BC34A;
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
-    .name-title {
-      flex-grow: 1;
+      margin: 20px 0;
     }
     .name-title h2 {
       font-family: 'Playfair Display', serif;
       font-size: 2em;
-      margin-bottom: 0;
+      margin: 0;
     }
     .occupation {
       color: #e91e63;
       font-weight: bold;
       font-size: 1.1em;
-      margin: 5px 0 0;
+      margin-top: 5px;
     }
     .profile-text {
       color: #111;
-      font-size: 0.95em;
+      font-size: 0.6em;
       margin: 0 auto 30px;
       padding: 0 20px;
+      line-height: 1.4;
+      font-family: 'Courier New', monospace;
+      white-space: pre;
     }
     .failures-container {
       display: flex;
       gap: 40px;
       justify-content: space-between;
-      margin-top: 40px;
+      margin-top: -20px;
       position: relative;
+      align-items: flex-start;
     }
     .column {
       width: calc(50% - 22px);
+    }
+    .subsection {
+      margin-bottom: 30px;
+      position: relative;
+      min-height: 120px;
+    }
+    .subsection-content {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
     }
     .subsection h3 {
       color: #e91e63;
       padding-bottom: 6px;
       font-size: 1.1em;
       text-transform: uppercase;
-      margin-top: 30px;
+      margin-top: 0;
+      margin-bottom: 10px;
+      height: 40px;
+      display: flex;
+      align-items: flex-end;
     }
     .subsection ul {
       padding-left: 20px;
-      font-size: 0.95em;
+      font-size: 0.6em;
+      margin-top: 0;
+    }
+    .subsection li {
+      margin-bottom: 8px;
+      word-wrap: break-word;
     }
     .vertical-line {
       position: absolute;
-      left: 42.5%;
+      left: 50%;
       transform: translateX(-50%);
       width: 3px;
       height: 100%;
       background-color: #8BC34A;
     }
-  </style>
-</head>
-<body>
-<div class="container">
-  <h1>Create Your Failure Resume</h1>
-  <form id="resume-form">
-    <div class="form-section">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required>
-
-      <label for="occupation">Occupation:</label>
-      <input type="text" id="occupation" name="occupation" required>
-
-      <label for="profile">Profile (max 70 words):</label>
-      <textarea id="profile" name="profile" maxlength="500" rows="4" required></textarea>
-
-      <label for="photo">Upload Profile Photo:</label>
-      <input type="file" id="photo" name="photo" accept="image/*">
-    </div>
-
-    <div class="form-section" id="failures">
-      <h2>Failures</h2>
-      <div class="failure-group" data-category="Failures in Academics">
-        <label>Failures in Academics :</label>
-        <input type="text" name="Failures in Academics[]">
-        <input type="text" name="Failures in Academics[]">
-        <input type="text" name="Failures in Academics[]">
-        <input type="text" name="Failures in Academics[]">
-      </div>
-      <div class="failure-group" data-category="Jobs I Never Got">
-        <label>Jobs I Never Got:</label>
-        <input type="text" name="Jobs I Never Got[]">
-        <input type="text" name="Jobs I Never Got[]">
-        <input type="text" name="Jobs I Never Got[]">
-        <input type="text" name="Jobs I Never Got[]">
-      </div>
-      <div class="failure-group" data-category="Screw-Ups in Business">
-        <label>Screw-Ups in Business:</label>
-        <input type="text" name="Screw-Ups in Business[]">
-        <input type="text" name="Screw-Ups in Business[]">
-        <input type="text" name="Screw-Ups in Business[]">
-        <input type="text" name="Screw-Ups in Business[]">
-      </div>
-      <div class="failure-group" data-category="Things I Never Accomplished">
-        <label>Things I Never Accomplished:</label>
-        <input type="text" name="Things I Never Accomplished[]">
-        <input type="text" name="Things I Never Accomplished[]">
-        <input type="text" name="Things I Never Accomplished[]">
-        <input type="text" name="Things I Never Accomplished[]">
-      </div>
-      <div class="failure-group" data-category="Skills I Never Established">
-        <label>Skills I Never Established:</label>
-        <input type="text" name="Skills I Never Established[]">
-        <input type="text" name="Skills I Never Established[]">
-        <input type="text" name="Skills I Never Established[]">
-        <input type="text" name="Skills I Never Established[]">
-      </div>
-      <div class="failure-group" data-category="Things That Still Scare Me">
-        <label>Things That Still Scare Me:</label>
-        <input type="text" name="Things That Still Scare Me[]">
-        <input type="text" name="Things That Still Scare Me[]">
-        <input type="text" name="Things That Still Scare Me[]">
-        <input type="text" name="Things That Still Scare Me[]">
-      </div>
-    </div>
-
-  <button type="submit">Generate Resume</button>
-  </form>
-
-  <div class="resume-preview" id="preview" style="display:none;"></div>
-</div>
-
-<script>
-  document.getElementById('resume-form').onsubmit = function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const occupation = document.getElementById('occupation').value;
-    const profile = document.getElementById('profile').value;
-    const photo = document.getElementById('photo').files[0];
-
-    const preview = document.getElementById('preview');
-    preview.innerHTML = `
-      <h1 class="resume-title">The Failure Resume</h1>
-      <div class="header-section">
-        <img class="profile-pic" style="display:none;" id="photo-preview" />
-        <div class="name-title">
-          <h2>${name}</h2>
-          <p class="occupation">${occupation}</p>
-        </div>
-      </div>
-      <div class="green-divider"></div>
-      <p class="profile-text">${profile}</p>
-      <div class="failures-container">
-        <div class="column" id="left-column"></div>
-        <div class="column" id="right-column"></div>
-        <div class="vertical-line"></div>
-    `;
-
-    if (photo) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.getElementById('photo-preview');
-        img.src = e.target.result;
-        img.style.display = 'block';
-      }
-      reader.readAsDataURL(photo);
+    #export-pdf {
+      background-color: #e91e63;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 20px auto;
+      display: block;
+    }
+    #export-pdf:hover {
+      background-color: #c2185b;
     }
 
-    const leftCategories = ['Failures in Academics', 'Jobs I Never Got', 'Skills I Never Established'];
-    const rightCategories = ['Screw-Ups in Business', 'Things I Never Accomplished', 'Things That Still Scare Me'];
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Your Failure Resume</h1>
+    <form id="resume-form">
+      <div class="form-section">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="occupation">Occupation:</label>
+        <input type="text" id="occupation" name="occupation" required maxlength="42" oninput="limitOccupation(this)">
+        <div class="char-count">
+          <span id="occupation-char-count">0</span>/42 characters
+        </div>
+        
+        <label for="profile">Profile:</label>
+        <textarea id="profile" name="profile" rows="3" required 
+                  oninput="limitProfileText(this)"></textarea>
+        <div class="char-count">
+          <span id="profile-char-count">0</span>/330 characters
+        </div>
+        
+        <label for="photo">Upload Profile Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <div id="photo-error" class="error-message" style="display:none;">Please upload a profile photo</div>
+      </div>
+      <div class="form-section" id="failures">
+        <h2>Failures</h2>
+        <div class="failure-group" data-category="Failures in Academics">
+          <label>Failures in Academics:</label>
+          <input type="text" name="Failures in Academics[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Failures in Academics[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Failures in Academics[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="academics-error" style="display:none;">Please fill all academic failure fields</div>
+        </div>
+        <div class="failure-group" data-category="Jobs I Never Got">
+          <label>Jobs I Never Got:</label>
+          <input type="text" name="Jobs I Never Got[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Jobs I Never Got[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Jobs I Never Got[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="jobs-error" style="display:none;">Please fill all job fields</div>
+        </div>
+        <div class="failure-group" data-category="Screw-Ups in Business">
+          <label>Screw-Ups in Business:</label>
+          <input type="text" name="Screw-Ups in Business[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Screw-Ups in Business[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Screw-Ups in Business[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="business-error" style="display:none;">Please fill all business screw-up fields</div>
+        </div>
+        <div class="failure-group" data-category="Things I Never Accomplished">
+          <label>Things I Never Accomplished:</label>
+          <input type="text" name="Things I Never Accomplished[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Things I Never Accomplished[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Things I Never Accomplished[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="accomplished-error" style="display:none;">Please fill all accomplishment fields</div>
+        </div>
+        <div class="failure-group" data-category="Skills I Never Established">
+          <label>Skills I Never Established:</label>
+          <input type="text" name="Skills I Never Established[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Skills I Never Established[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Skills I Never Established[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="skills-error" style="display:none;">Please fill all skill fields</div>
+        </div>
+        <div class="failure-group" data-category="Things That Still Scare Me">
+          <label>Things That Still Scare Me:</label>
+          <input type="text" name="Things That Still Scare Me[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Things That Still Scare Me[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <input type="text" name="Things That Still Scare Me[]" maxlength="90" oninput="limitFailureItem(this)" required>
+          <div class="error-message" id="scare-error" style="display:none;">Please fill all fear fields</div>
+        </div>
+      </div>
+      <button type="submit">Generate Resume</button>
+    </form>
 
-    const renderTo = (columnId, cat) => {
-      const inputs = document.getElementsByName(`${cat}[]`);
-      const values = Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
-      if (values.length) {
-        const html = `
-          <div class="subsection">
-            <h3>${cat.replace(/([A-Z])/g, ' $1').trim()}:</h3>
-            <ul>${values.map(v => `<li>${v}</li>`).join('')}</ul>
-          </div>`;
-        document.getElementById(columnId).innerHTML += html;
+    <div class="resume-preview" id="preview" style="display:none;"></div>
+    <button id="export-pdf" style="display:none; margin: 20px auto;">Download as PDF</button>
+  </div>
+
+  <script>
+    // Strict 110-character line enforcement
+    function limitProfileText(textarea) {
+      const maxCharsPerLine = 110;
+      const maxLines = 3;
+      const maxTotalChars = maxCharsPerLine * maxLines;
+      
+      let text = textarea.value;
+      let lines = [];
+      let currentLine = '';
+      
+      // Process text character-by-character
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        
+        if (char === '\n') {
+          if (lines.length < maxLines) {
+            lines.push(currentLine);
+            currentLine = '';
+          }
+          continue;
+        }
+        
+        if (currentLine.length < maxCharsPerLine) {
+          currentLine += char;
+        } else if (lines.length < maxLines - 1) {
+          lines.push(currentLine);
+          currentLine = char;
+        }
       }
+      
+      if (currentLine && lines.length < maxLines) {
+        lines.push(currentLine);
+      }
+      
+      const newText = lines.slice(0, maxLines).join('\n');
+      
+      if (newText !== text) {
+        const cursorPos = textarea.selectionStart;
+        textarea.value = newText;
+        textarea.selectionStart = cursorPos;
+        textarea.selectionEnd = cursorPos;
+      }
+      
+      document.getElementById('profile-char-count').textContent = newText.length;
+      document.getElementById('profile-char-count').className = 
+        newText.length >= maxTotalChars ? 'char-limit' : '';
+    }
+
+    function limitOccupation(input) {
+      const maxChars = 42;
+      document.getElementById('occupation-char-count').textContent = input.value.length;
+      document.getElementById('occupation-char-count').className = 
+        input.value.length >= maxChars ? 'char-limit' : '';
+    }
+
+    function limitFailureItem(input) {
+      const maxChars = 90;
+      if (input.value.length > maxChars) {
+        input.value = input.value.substring(0, maxChars);
+      }
+    }
+
+    function calculateTextHeight(items) {
+      // More precise height calculation
+      const avgLineHeight = 18;
+      const titleHeight = 40;
+      const itemPadding = 10;
+      const lineLength = 55;
+      
+      let totalLines = items.reduce((sum, text) => {
+        return sum + Math.max(Math.ceil(text.length / lineLength), 1);
+      }, 0);
+      
+      return titleHeight + (totalLines * avgLineHeight) + (items.length * itemPadding);
+    }
+
+    document.getElementById('profile').addEventListener('focus', function() {
+      document.getElementById('profile-char-count').textContent = this.value.length;
+    });
+
+    document.getElementById('occupation').addEventListener('focus', function() {
+      document.getElementById('occupation-char-count').textContent = this.value.length;
+    });
+
+    document.getElementById('resume-form').onsubmit = function(e) {
+      e.preventDefault();
+      
+      // Validate photo upload
+      const photo = document.getElementById('photo').files[0];
+      if (!photo) {
+        document.getElementById('photo-error').style.display = 'block';
+        return;
+      } else {
+        document.getElementById('photo-error').style.display = 'none';
+      }
+      
+      // Validate all failure fields
+      let allFieldsFilled = true;
+      const failureGroups = document.querySelectorAll('.failure-group');
+      
+      failureGroups.forEach(group => {
+        const inputs = group.querySelectorAll('input[type="text"]');
+        const errorElement = group.querySelector('.error-message');
+        let groupValid = true;
+        
+        inputs.forEach(input => {
+          if (!input.value.trim()) {
+            groupValid = false;
+            allFieldsFilled = false;
+          }
+        });
+        
+        if (!groupValid) {
+          errorElement.style.display = 'block';
+        } else {
+          errorElement.style.display = 'none';
+        }
+      });
+      
+      if (!allFieldsFilled) {
+        return;
+      }
+      
+      // If all validations pass, generate the resume
+      const name = document.getElementById('name').value;
+      const occupation = document.getElementById('occupation').value;
+      const profile = document.getElementById('profile').value;
+      const preview = document.getElementById('preview');
+
+      preview.innerHTML = ` 
+        <h1 class="resume-title">The Failure Resume</h1>
+        <div class="header-section">
+          <div class="profile-pic-container">
+            <img class="profile-pic" id="photo-preview" />
+          </div>
+          <div class="name-title">
+            <h2>${name}</h2>
+            <p class="occupation">${occupation}</p>
+          </div>
+        </div>
+        <div class="green-divider"></div>
+        <p class="profile-text">${profile.replace(/\n/g, '<br>')}</p>
+        <div class="failures-container">
+          <div class="column" id="left-column"></div>
+          <div class="column" id="right-column"></div>
+          <div class="vertical-line"></div>
+        </div>
+      `;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('photo-preview');
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(photo);
+
+      // Pair categories for vertical alignment
+      const categoryPairs = [
+        ['Failures in Academics', 'Screw-Ups in Business'],
+        ['Jobs I Never Got', 'Things I Never Accomplished'],
+        ['Skills I Never Established', 'Things That Still Scare Me']
+      ];
+      
+      const renderPair = (leftCat, rightCat) => {
+        const leftVals = Array.from(document.getElementsByName(leftCat+'[]'))
+          .map(i => i.value.trim()).filter(Boolean);
+        const rightVals = Array.from(document.getElementsByName(rightCat+'[]'))
+          .map(i => i.value.trim()).filter(Boolean);
+        
+        const leftHeight = calculateTextHeight(leftVals);
+        const rightHeight = calculateTextHeight(rightVals);
+        const maxHeight = Math.max(leftHeight, rightHeight);
+        
+        const leftHtml = leftVals.length > 0 ? `
+          <div class="subsection" style="height: ${maxHeight}px">
+            <div class="subsection-content">
+              <h3>${leftCat.replace(/([A-Z])/g,' $1').trim()}:</h3>
+              <ul>${leftVals.map(v => `<li>${v}</li>`).join('')}</ul>
+            </div>
+          </div>
+        ` : `<div class="subsection" style="height: ${maxHeight}px; visibility: hidden;"></div>`;
+        
+        const rightHtml = rightVals.length > 0 ? `
+          <div class="subsection" style="height: ${maxHeight}px">
+            <div class="subsection-content">
+              <h3>${rightCat.replace(/([A-Z])/g,' $1').trim()}:</h3>
+              <ul>${rightVals.map(v => `<li>${v}</li>`).join('')}</ul>
+            </div>
+          </div>
+        ` : `<div class="subsection" style="height: ${maxHeight}px; visibility: hidden;"></div>`;
+        
+        document.getElementById('left-column').innerHTML += leftHtml;
+        document.getElementById('right-column').innerHTML += rightHtml;
+      };
+      
+      // Render pairs to ensure vertical alignment
+      categoryPairs.forEach(pair => renderPair(pair[0], pair[1]));
+
+      preview.style.display = 'block';
+      document.getElementById('export-pdf').style.display = 'block';
+      window.scrollTo(0, preview.offsetTop);
     };
 
-    leftCategories.forEach(cat => renderTo('left-column', cat));
-    rightCategories.forEach(cat => renderTo('right-column', cat));
+    document.addEventListener('click', async function(e) {
+      if (e.target.id !== 'export-pdf') return;
+      const preview = document.getElementById('preview');
 
-    preview.style.display = 'block';
-    window.scrollTo(0, preview.offsetTop);
-  }
-</script>
+      // Add a small delay to ensure all elements are properly rendered
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const canvas = await html2canvas(preview, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        scrollY: -window.scrollY,
+        logging: true,
+        useCORS: true,
+        allowTaint: true
+      });
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      });
+
+      const imgProps = pdf.getImageProperties(canvas);
+      const pdfWidth = 210 - 20;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 1.0),
+        'JPEG',
+        10, 10,
+        pdfWidth, pdfHeight
+      );
+      pdf.save('failure_resume.pdf');
+    });
+  </script>
 </body>
 </html>
